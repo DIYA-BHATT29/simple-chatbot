@@ -1,9 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffc0cb; /* Changed to pink */
-  --foreground: #000000; /* Changed to black */
-  --input-bg: #fff0f5; /* Added for light pink text box */
+  --background: #c42f2f;
+  --foreground: #d9e664;
 }
 
 @theme inline {
@@ -13,12 +12,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Remove the dark mode media query if you don't want dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #ffc0cb; /* Keep pink in dark mode too */
-    --foreground: #000000; /* Keep black text in dark mode */
-    --input-bg: #fff0f5; /* Keep light pink in dark mode */
+    --background: #0a0a0a;
+    --foreground: #ededed;
   }
 }
 
@@ -26,32 +23,4 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Style for text input boxes */
-input[type="text"],
-textarea,
-.chat-input,
-.text-box {
-  background-color: var(--input-bg);
-  color: var(--foreground);
-  border: 1px solid #ffb6c1;
-  border-radius: 8px;
-  padding: 12px;
-}
-
-/* Style for chat response bubbles */
-.chat-response,
-.response-bubble,
-.bot-message {
-  color: #000000; /* Black text for responses */
-  background-color: #f8f9fa; /* Light background for contrast */
-  border-radius: 12px;
-  padding: 12px 16px;
-  margin: 8px 0;
-}
-
-/* If you're using a specific class for your chat container */
-.chat-container {
-  background-color: var(--background);
 }
