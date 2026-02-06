@@ -1,37 +1,42 @@
 import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    console.log("API KEY EXISTS:", !!process.env.OPENAI_API_KEY);
+    const { messages } = await req.json();
 
-    const body = await req.json();
-    console.log("REQUEST BODY:", body);
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "OPENROUTER_API_KEY is not defined in environment variables" },
+        { status: 500 }
+      );
+    }
 
-    const { message } = body;
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4.1-mini",
-      messages: [{ role: "user", content: message }],
+    const openai = new OpenAI({
+      apiKey: apiKey,
+      baseURL: "https://openrouter.ai/api/v1",
+      defaultHeaders: {
+        "HTTP-Referer": "http://localhost:3000", // Required for OpenRouter rankings
+        "X-Title": "Simple Chatbot", // Optional
+      },
     });
 
-    return new Response(
-      JSON.stringify({
-        reply: completion.choices[0].message.content,
-      }),
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("FULL ERROR OBJECT:", error);
-    console.error("ERROR MESSAGE:", error.message);
+    const completion = await openai.chat.completions.create({
+      // You can change this to any model supported by OpenRouter
+      // e.g., "openai/gpt-3.5-turbo", "meta-llama/llama-3-8b-instruct", etc.
+      model: "google/gemini-2.0-flash-001", 
+      messages: messages,
+    });
 
-    return new Response(
-      JSON.stringify({
-        error: error.message || "Unknown server error",
-      }),
+    const text = completion.choices[0].message.content;
+
+    return NextResponse.json({ text });
+
+  } catch (error) {
+    console.error("Chat Error:", error);
+    return NextResponse.json(
+      { error: "Failed to generate response" },
       { status: 500 }
     );
   }
